@@ -22,7 +22,7 @@ Roger Schlafly's review of the Manresa proposal (Jan 23, 2026) independently con
 | **Cost (Year 1)** | **$227,400** | **~$1,200** (Cloud costs only) |
 | **Data Ownership** | "Client Content" (Vendor Lock-in Risk) | **100% Sovereign** (Your AWS, Your Code) |
 | **AI Intelligence** | "Proprietary Growth Engine" | **Open/Auditable** (PSAI + The-Index) |
-| **Legacy Archives** | "Legacy Archiving" (TBD) | **The Index** (Already Built & Semantic) |
+| **Legacy Archives** | "Legacy Archiving" (TBD) | **The Index** (Metadata Discovery for Physical & Digital) |
 
 ---
 
@@ -39,17 +39,20 @@ We utilize a **Hub-and-Spoke** architecture centered on a Unified API Gateway.
     *   `GET /content/recommend?context=...` -> Returns AI-selected articles/actions.
 
 ### 1.2 The Spokes (Data Sources)
-*   **The Index (Archives):** Postgres + `pgvector`. Houses 30k+ columns, PDFs, and audio transcripts.
-    *   *Upgrade:* Add `web_content` table to store current articles alongside archives.
+*   **The Index (Discovery Layer):** Postgres + `pgvector`. A metadata index referring to physical archives, digitized PDFs, and articles. 
+    *   *Note:* The Index does **not** host raw content; it points to it. It includes references to vast physical archives not yet digitized.
+    *   *Upgrade:* Create a unified schema that maps physical locations, NAS file paths, and web URLs.
 *   **Donor App (Transactions):** Postgres (`donor-db-v1`).
     *   *Upgrade:* Add `web_attribution` table to track which articles drove donations.
 *   **Rock Ridge (CRM):** GoHighLevel API.
     *   *Upgrade:* Two-way sync agent (runs every 5m) to ensure `Donor-App` status is reflected in CRM tags (e.g., "VIP_Donor").
 
-### 1.3 Infrastructure (AWS)
+### 1.3 Infrastructure (AWS & Local)
 *   **Compute:** EC2 (`t3.medium`) running Docker Compose for Backend/API.
 *   **Frontend:** Vercel Pro (for global Edge caching) OR AWS Amplify.
-*   **Storage:** S3 (Media Assets) + Synology NAS (Cold Storage).
+*   **Storage:** 
+    *   **S3:** Public-facing media and web assets.
+    *   **Synology NAS:** The "Sovereign Vault." Contains all existing PDF scans (from the archives site) and "droves" of unpublished archival material.
 
 ---
 
@@ -70,11 +73,18 @@ We utilize a **Hub-and-Spoke** architecture centered on a Unified API Gateway.
     *   *The Vault:* "On This Day" widget pulling from *The Index*.
 *   **The Article Page ("The Deep Read"):**
     *   *Layout:* Single column, optimal 65ch width, serif typography (*Merriweather*).
-    *   *Sidebar:* "Context Engine"  AI-suggested related archives (e.g., "See Phyllis's 1978 testimony on this topic").
-    *   *Inline Action:* "Sign Petition" widgets injected *between paragraphs* based on reading depth.
-*   **The Archive Viewer:**
-    *   *Interface:* Split-pane PDF viewer (left) + Transcript/Entities (right).
-    *   *Search:* Semantic search bar ("What did Phyllis think about...") powered by `pgvector`.
+    *   *Sidebar:* "Context Engine" AI-suggested related archives.
+    *   *Inline Action:* "Sign Petition" widgets injected *between paragraphs*.
+*   **The Archive Viewer (Consolidated):**
+    *   *Interface:* High-performance PDF viewer for scans (replacing `archives.phyllisschlafly.com`).
+    *   *Source:* Files served from Sovereign infrastructure (S3/NAS), eliminating 3rd party vendor dependencies.
+*   **Video Hub:** Integrated YouTube embeds from the Phyllis Schlafly YouTube channel, categorized and searchable.
+
+### 2.3 The "One Site" Consolidation
+We are merging three distinct silos into one authoritative domain:
+1.  **Main Site (`phyllisschlafly.com`):** Primarily articles and some audio.
+2.  **Archives Site (`archives.phyllisschlafly.com`):** Primarily PDF scans (to be deprecated).
+3.  **The Vault (NAS):** All existing PDF scans + massive unpublished backlog (Phase 2 digitization).
 
 ---
 
@@ -127,15 +137,15 @@ A dedicated development instance has been provisioned for the Phase 1 Prototype 
 *   **Key:** `psai-dev-keypair` (Found in PSAI/psai-dev-keypair.pem)
 *   **Role:** Sandbox for Unified API and Next.js frontend prototyping.
 
-### 5.1 The "Zombie WP" Migration Plan
+### 5.1 The "Great Consolidation" Migration Plan
 
-*   **Audit:** Use `wordpress_helper.py` to map all 35k URLs.
+*   **Audit:** Use `wordpress_helper.py` to map all 35k URLs from the main site.
+*   **Archives Audit:** Map all PDFs on `archives.phyllisschlafly.com` to their physical counterparts on the NAS drive.
 *   **ETL Script:**
-    *   Download raw HTML.
-    *   Cleanse (remove shortcodes, fix broken media links).
-    *   Re-hydrate (use PSAI to generate new tags/summaries).
-    *   Insert into `The-Index` DB.
-*   **Redirect Map:** Generate Nginx/Vercel config for 301 redirects (Critical for SEO).
+    *   **WP Content:** Download, cleanse, re-hydrate with PSAI, and index.
+    *   **PDF Archives:** Re-host PDF scans from NAS to S3/Cloudfront.
+    *   **Video:** Catalog Phyllis Schlafly YouTube channel for embedding.
+*   **Redirect Map:** Generate comprehensive 301 redirects for both the main site and the old archives subdomain.
 
 ### 5.2 Phase 1: Prototype Sprint (Next 48 Hours)
 *   **Objective:** Prove the visual and technical superiority of this approach.
