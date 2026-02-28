@@ -30,7 +30,10 @@ export default function MetaLayer({ children }: { children: React.ReactNode }) {
   const [rating, setRating] = useState(5);
   const [submitted, setSubmitted] = useState(false);
 
-  const currentProto = PROTOTYPES.find((p) => p.path === pathname) || PROTOTYPES[0];
+  const currentProto = PROTOTYPES.find((p) => pathname === p.path || pathname.startsWith(p.path + "/")) || PROTOTYPES[0];
+
+  // Extract sub-path suffix (e.g., "/about", "/events", "/article/some-slug") for cross-prototype navigation
+  const subPath = currentProto ? pathname.slice(currentProto.path.length) : "";
 
   const submitFeedback = async () => {
     try {
@@ -84,13 +87,13 @@ export default function MetaLayer({ children }: { children: React.ReactNode }) {
                   <button
                     key={p.id}
                     onClick={() => {
-                      router.push(p.path);
+                      router.push(p.path + subPath);
                       setIsOpen(false);
                     }}
                     className={cn(
                       "text-xs p-3 rounded-xl border transition-all text-left flex flex-col gap-1",
-                      pathname === p.path 
-                        ? "bg-blue-600 border-blue-400 text-white shadow-lg shadow-blue-500/20" 
+                      (pathname === p.path || pathname.startsWith(p.path + "/"))
+                        ? "bg-blue-600 border-blue-400 text-white shadow-lg shadow-blue-500/20"
                         : "bg-white/5 border-white/10 text-white/70 hover:bg-white/10 hover:border-white/20"
                     )}
                   >
