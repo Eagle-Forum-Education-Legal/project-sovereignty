@@ -1,0 +1,16 @@
+Flask==3.1.0
+flask-cors==5.0.0
+protobuf==6.30.2
+python-dotenv==1.1.0
+qdrant_client==1.14.2
+sentence_transformers==4.1.0
+google-genai==1.10.0
+flask-limiter==3.8.0
+redis==5.2.1
+boto3==1.35.82
+PyJWT==2.10.1
+cryptography==44.0.0
+requests==2.32.3
+langgraph==0.2.62
+reportlab==4.2.5
+tenacity==9.0.0
