@@ -59,7 +59,7 @@ export default function PSAIChat({ style = "modern" }: { style?: "modern" | "cla
       };
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (e) {
-      setMessages((prev) => [...prev, { role: "assistant", content: "Connection error with the Sovereignty Engine." }]);
+      setMessages((prev) => [...prev, { role: "assistant", content: "Connection error. Please try again." }]);
     } finally {
       setIsLoading(false);
     }
@@ -81,11 +81,11 @@ export default function PSAIChat({ style = "modern" }: { style?: "modern" | "cla
       )}>
         <div className="flex items-center gap-2">
           <Sparkles className={cn("w-5 h-5", style === "future" ? "text-blue-400" : "text-blue-600")} />
-          <span className="font-bold text-sm tracking-tight">Ask the Oracle</span>
+          <span className="font-bold text-sm tracking-tight">Ask Phyllis AI</span>
         </div>
         <div className="flex items-center gap-1">
           <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-          <span className="text-[10px] uppercase font-bold opacity-50">Sovereign Engine Active</span>
+          <span className="text-[10px] uppercase font-bold opacity-50">Phyllis AI Online</span>
         </div>
       </div>
 
@@ -154,7 +154,7 @@ export default function PSAIChat({ style = "modern" }: { style?: "modern" | "cla
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Search the Index..."
+            placeholder="Ask about Phyllis Schlafly's legacy..."
             className={cn(
               "w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 pr-12 transition-all",
               style === "future" && "bg-black/60 border-blue-500/20 text-white placeholder:text-blue-500/30"
