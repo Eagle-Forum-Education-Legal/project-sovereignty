@@ -119,9 +119,16 @@ Instead of a separate $15k site, we build this as a high-performance module `/ac
 
 ---
 
-##  Volume 5: Implementation & Migration
+## Volume 5: Implementation & Migration
+
+### 5.0 Development Sandbox (NEW)
+A dedicated development instance has been provisioned for the Phase 1 Prototype Sprint.
+*   **DNS:** `ec2-3-144-231-148.us-east-2.compute.amazonaws.com`
+*   **Key:** `psai-dev-keypair` (Found in PSAI/psai-dev-keypair.pem)
+*   **Role:** Sandbox for Unified API and Next.js frontend prototyping.
 
 ### 5.1 The "Zombie WP" Migration Plan
+
 *   **Audit:** Use `wordpress_helper.py` to map all 35k URLs.
 *   **ETL Script:**
     *   Download raw HTML.
